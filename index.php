@@ -47,14 +47,13 @@ $hotels = [
 $filtered_hotels = &$hotels;
 
 $filters = [
-    'parking' => $_GET['parking'] ?? " ",
-    'vote' => $_GET['vote'] ?? " ",
+    'parking' => $_GET['parking'] ?? "",
+    'vote' => $_GET['vote'] ?? "",
 ];
 
-
-if ($filters['parking']) {
+if ($filters['parking'] == 1) {
     //filter built in method
-    $filtered_hotels = array_filter($hotels, fn($hotel) => $hotel['parking'] == $filters['parking']); //new array
+    $filtered_hotels = array_filter($filtered_hotels, fn($hotel) => $hotel['parking'] == $filters['parking']); //new array
 
 } else if ($filters['parking'] == 0) {
     $filtered_hotels = array_filter($filtered_hotels, fn($hotel) => $hotel['parking'] == false);
