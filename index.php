@@ -1,5 +1,7 @@
 <?php
 
+$not_found_message = "<div class='alert alert-danger'>Nessun hotel trovato</div>";
+
 $hotels = [
 
     [
@@ -40,6 +42,40 @@ $hotels = [
 
 ];
 
+$filtered_hotels = $hotels;
+
+$filters = [
+    'parking' => $_GET['parking'],
+    'vote' => $_GET['vote'],
+];
+
+if ($filters['parking']) {
+    //foreach method
+    foreach ($hotels as $key => $hotel) {
+        if ($hotel['parking'] != $filters['parking']) {
+            unset($hotels[$key]);
+        }
+    }
+    $filtered_hotels = $hotels;
+
+    //filter built in method
+    // $filtered_hotels = array_filter($hotels, fn($hotel) => $hotel['parking'] == $filters['parking']); //new array
+}
+
+if ($filters['vote']) {
+    // foreach method
+    foreach ($hotels as $key => $hotel) {
+        if ($hotel['vote'] < $filters['vote']) {
+            unset($hotels[$key]);
+        }
+    }
+    $filtered_hotels = $hotels;
+
+    //filter built in method
+    // $filtered_hotels = array_filter($filtered_hotels, fn($hotel) => $hotel['vote'] >= $filters['vote']); //new array
+}
+
+// var_dump($filters);
 ?>
 
 <!DOCTYPE html>
@@ -60,6 +96,37 @@ $hotels = [
         </h1>
     </header>
     <main class="main my-5">
+        <div class="container">
+            <!-- filter -->
+            <div class="row">
+                <div class="col">
+                    <form class="mb-5" action="index.php" method="GET">
+                        <!-- parking filter -->
+                        <div class="mb-3">
+                            <label for="parking" class="form-label">Parcheggio</label>
+                            <select class="form-select" name="parking" id="parking">
+                                <option value="">Tutti</option>
+                                <option value="1">Disponibile</option>
+                                <option value="0">Non disponibile</option>
+                            </select>
+                        </div>
+                        <!-- vote filter -->
+                        <div class="mb-3">
+                            <label for="vote" class="form-label">Voto</label>
+                            <select class="form-select" name="vote" id="vote">
+                                <option value="">Tutti</option>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-primary" type="submit">Filtra</button>
+                    </form>
+                </div>
+            </div>
+        </div>
         <div class="container">
             <table class="table table-striped table-bordered">
                 <thead>
@@ -86,37 +153,49 @@ $hotels = [
                     $checkmark = "&#10003;";
                     $not_available = "&#10005;";
 
-                    foreach ($hotels as $hotel) {
+                    //check if there are filtered hotels
+                    if ($filtered_hotels) {
+                        foreach ($filtered_hotels as $hotel) {
 
-                        echo "<tr>";
+                            echo "<tr>";
 
-                        foreach ($hotel as $key => $value) {
-                            //parking checkmark - stars - distance format conditions
-                            if ($key == 'parking') {
-                                if ($value) {
-                                    echo "<td class='text-success text-center fw-bold'>$checkmark</td>";
+                            foreach ($hotel as $key => $value) {
+                                //parking checkmark - stars - distance format conditions
+                                if ($key == 'parking') {
+                                    if ($value) {
+                                        echo "<td class='text-success text-center fw-bold'>$checkmark</td>";
+                                    } else {
+                                        echo "<td class='text-danger text-center fw-bold'>$not_available</td>";
+                                    }
+                                } else if ($key == 'vote') {
+                                    //stars for vote
+                                    echo "<td class='text-center stars'>";
+                                    for ($i = 0; $i < $value; $i++) {
+                                        echo "&#11088;";
+                                    }
+                                    echo "</td>";
+                                } else if ($key == 'distance_to_center') {
+                                    //distance format
+                                    echo "<td class='text-center'>$value km</td>";
                                 } else {
-                                    echo "<td class='text-danger text-center fw-bold'>$not_available</td>";
+                                    echo "<td>$value</td>";
                                 }
-                            } else if ($key == 'vote') {
-                                //stars for vote
-                                echo "<td class='text-center stars'>";
-                                for ($i = 0; $i < $value; $i++) {
-                                    echo "&#11088;";
-                                }
-                                echo "</td>";
-                            } else if ($key == 'distance_to_center') {
-                                //distance format
-                                echo "<td class='text-center'>$value km</td>";
-                            } else {
-                                echo "<td>$value</td>";
                             }
+
+                            //closing table row
+                            echo "</tr>";
                         }
-                        echo "</tr>";
                     }
                     ?>
                 </tbody>
             </table>
+
+            <!-- not found message -->
+            <?php
+            if (!$filtered_hotels) {
+                echo $not_found_message;
+            }
+            ?>
         </div>
     </main>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
