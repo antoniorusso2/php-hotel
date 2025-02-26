@@ -2,6 +2,8 @@
 
 $not_found_message = "<div class='alert alert-danger'>Nessun hotel trovato</div>";
 
+echo "live server enabled";
+
 $hotels = [
 
     [
@@ -42,24 +44,22 @@ $hotels = [
 
 ];
 
-$filtered_hotels = $hotels;
+$filtered_hotels = &$hotels;
 
 $filters = [
-    'parking' => $_GET['parking'],
-    'vote' => $_GET['vote'],
+    'parking' => $_GET['parking'] ?? " ",
+    'vote' => $_GET['vote'] ?? " ",
 ];
 
-if ($filters['parking']) {
-    //foreach method
-    foreach ($hotels as $key => $hotel) {
-        if ($hotel['parking'] != $filters['parking']) {
-            unset($hotels[$key]);
-        }
-    }
-    $filtered_hotels = $hotels;
 
+if ($filters['parking']) {
     //filter built in method
-    // $filtered_hotels = array_filter($hotels, fn($hotel) => $hotel['parking'] == $filters['parking']); //new array
+    $filtered_hotels = array_filter($hotels, fn($hotel) => $hotel['parking'] == $filters['parking']); //new array
+
+} else if ($filters['parking'] == 0) {
+    $filtered_hotels = array_filter($filtered_hotels, fn($hotel) => $hotel['parking'] == false);
+} else {
+    $filtered_hotels = $hotels;
 }
 
 if ($filters['vote']) {
@@ -74,6 +74,8 @@ if ($filters['vote']) {
     //filter built in method
     // $filtered_hotels = array_filter($filtered_hotels, fn($hotel) => $hotel['vote'] >= $filters['vote']); //new array
 }
+
+
 
 // var_dump($filters);
 ?>
@@ -123,6 +125,10 @@ if ($filters['vote']) {
                             </select>
                         </div>
                         <button class="btn btn-primary" type="submit">Filtra</button>
+                        <!-- reset filters button -->
+                        <button class="btn btn-danger">
+                            Resetta
+                        </button>
                     </form>
                 </div>
             </div>
@@ -186,6 +192,24 @@ if ($filters['vote']) {
                             echo "</tr>";
                         }
                     }
+
+
+                    //?other solution
+                    // foreach ($filtered_hotels as $hotel) {
+                    // 
+                    ?>
+
+                    <!-- <tr>
+                        <td><?php echo $hotel['name']; ?></td>
+                        <td><?php echo $hotel['description']; ?></td>
+                        <td class="text-center"><?php echo $hotel['parking'] ? $checkmark : $not_available; ?></td>
+                        <td class="text-center stars"><?php echo $hotel['vote']; ?></td>
+                        <td class="text-center"><?php echo $hotel['distance_to_center']; ?></td>
+                    </tr> -->
+
+                    <?php
+                    // }
+                    // 
                     ?>
                 </tbody>
             </table>
@@ -198,8 +222,11 @@ if ($filters['vote']) {
             ?>
         </div>
     </main>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
 </body>
 
 </html>
