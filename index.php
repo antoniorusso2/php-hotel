@@ -49,6 +49,8 @@ $hotels = [
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Php-Hotel</title>
+
+    <link rel="stylesheet" href="./style.css">
 </head>
 
 <body>
@@ -66,8 +68,8 @@ $hotels = [
                         <th scope="col">Hotel</th>
                         <th scope="col">Descrizione</th>
                         <th scope="col" class="text-center">Parcheggio</th>
-                        <th scope="col">Voto</th>
-                        <th scope="col">Distanza dal centro</th>
+                        <th scope="col" class="text-center">Voto</th>
+                        <th scope="col" class="text-center">Distanza dal centro</th>
                     </tr>
 
                     <!-- dynamic headers using for each-->
@@ -89,12 +91,23 @@ $hotels = [
                         echo "<tr>";
 
                         foreach ($hotel as $key => $value) {
+                            //parking checkmark - stars - distance format conditions
                             if ($key == 'parking') {
                                 if ($value) {
                                     echo "<td class='text-success text-center fw-bold'>$checkmark</td>";
                                 } else {
                                     echo "<td class='text-danger text-center fw-bold'>$not_available</td>";
                                 }
+                            } else if ($key == 'vote') {
+                                //stars for vote
+                                echo "<td class='text-center stars'>";
+                                for ($i = 0; $i < $value; $i++) {
+                                    echo "&#11088;";
+                                }
+                                echo "</td>";
+                            } else if ($key == 'distance_to_center') {
+                                //distance format
+                                echo "<td class='text-center'>$value km</td>";
                             } else {
                                 echo "<td>$value</td>";
                             }
